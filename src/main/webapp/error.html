@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="3;url=/WEB-INF/views/home.jsp?error=1">
     <title>Deletion Failed</title>
 </head>
 <body>
     <h1>Deletion Failed</h1>
-    <p>An error occurred during deletion. You will be redirected to the home page with an error in a few seconds...</p>
+    <a href="<%= request.getContextPath() %>/redirectToHome">Go Back Home</a>
 </body>
 </html>

@@ -66,8 +66,12 @@ public class FilmController {
 				return "redirect:/error.html?error=1";
 			}
 		} catch (SQLException e) {
-			return "redirect:/error.?error=1";
+			return "redirect:/error.html?error=1";
 		}
+	}
+	@RequestMapping("/redirectToHome")
+	public String redirectToHome() {
+	    return "redirect:/WEB-INF/views/home.jsp";
 	}
 
 }
