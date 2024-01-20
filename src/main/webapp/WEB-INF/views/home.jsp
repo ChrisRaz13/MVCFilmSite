@@ -7,6 +7,10 @@
 <title>Insert title here</title>
 </head>
 <body>
-	Some stuff
+
+
+
+<a href="createfilm.html">Add a new film</a><br/>
+
 </body>
 </html>
