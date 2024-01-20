@@ -23,7 +23,7 @@ public class FilmController {
 		return "WEB-INF/views/home.jsp";
 	}
 
-	@RequestMapping(value = "createFilm", method = RequestMethod.POST)
+	@RequestMapping(value = "createfilm.do", method = RequestMethod.POST)
 	public ModelAndView createFilm(@RequestBody Film film) throws SQLException {
 		ModelAndView mv = new ModelAndView();
 		Film newFilm = filmDAO.createFilm(film);
@@ -41,4 +41,8 @@ public class FilmController {
 	    return mv;
 	}
 
+	
+	
+	
+	
 }

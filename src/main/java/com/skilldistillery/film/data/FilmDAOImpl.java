@@ -19,13 +19,13 @@ public class FilmDAOImpl implements FilmDAO {
 	private static final String PWD = "student";
 
 	public Film findFilmById(int filmId) throws SQLException {
-		Film film = null;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Film film = null;
 		String sql = "SELECT film.*, language.id, language.name FROM film JOIN language ON film.language_id = language.id WHERE film.id = ?";
 		Connection conn = DriverManager.getConnection(URL, USER, PWD);
 
@@ -50,7 +50,7 @@ public class FilmDAOImpl implements FilmDAO {
 
 		return film;
 	}
-	
+
 	public Film createFilm(Film film) throws SQLException {
 		Connection conn = DriverManager.getConnection(URL, USER, PWD);
 		try {
@@ -62,7 +62,7 @@ public class FilmDAOImpl implements FilmDAO {
 			stmt.setInt(1, film.getId());
 			stmt.setString(2, film.getTitle());
 			stmt.setString(3, film.getDescription());
-			stmt.setInt(4, film.getLanguageID());
+			stmt.setInt(4, film.getLanguageId());
 			int updateCount = stmt.executeUpdate();
 			if (updateCount == 1) {
 				ResultSet keys = stmt.getGeneratedKeys();
@@ -116,4 +116,39 @@ public class FilmDAOImpl implements FilmDAO {
 		return true;
 
 	}
+
+	@Override
+	public boolean updateFilm(Film film) throws SQLException {
+		String updateSql = "UPDATE film SET title = ?, description = ?, release_year = ?, "
+				+ "language_id = ?, rating = ? WHERE id = ?";
+
+		try (Connection conn = DriverManager.getConnection(URL, USER, PWD);
+				PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
+
+			conn.setAutoCommit(false);
+
+			try {
+				updateStmt.setString(1, film.getTitle());
+				updateStmt.setString(2, film.getDescription());
+				updateStmt.setInt(3, film.getReleaseYear());
+				updateStmt.setInt(4, film.getLanguageId());
+				updateStmt.setString(5, film.getRating());
+				updateStmt.setInt(6, film.getId());
+
+				int rowsAffected = updateStmt.executeUpdate();
+
+				if (rowsAffected > 0) {
+					conn.commit();
+					return true;
+				} else {
+					conn.rollback();
+					return false;
+				}
+			} catch (SQLException e) {
+				conn.rollback();
+				throw e;
+			}
+		}
+	}
+
 }

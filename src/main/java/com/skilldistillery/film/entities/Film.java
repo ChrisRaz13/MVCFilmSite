@@ -10,7 +10,7 @@ public class Film {
 	private String description;
 	private int releaseYear;
 	private String language;
-	private int languageID;
+	private int languageId;
 	private int rentalDuration;
 	private double rentalRate;
 	private int length;
@@ -36,7 +36,7 @@ public class Film {
 		this.description = description;
 		this.releaseYear = releaseYear;
 		this.language = language;
-		this.languageID = languageID;
+		this.languageId = languageID;
 		this.rentalDuration = rentalDuration;
 		this.rentalRate = rentalRate;
 		this.length = length;
@@ -49,14 +49,14 @@ public class Film {
 
 
 
-	public int getLanguageID() {
-		return languageID;
+	public int getLanguageId() {
+		return languageId;
 	}
 
 
 
-	public void setLanguageID(int languageID) {
-		this.languageID = languageID;
+	public void setLanguageId(int languageID) {
+		this.languageId = languageID;
 	}
 
 
