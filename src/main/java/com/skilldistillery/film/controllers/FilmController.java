@@ -56,18 +56,18 @@ public class FilmController {
 	}
 
 	@RequestMapping(value = "deletefilm.do", method = RequestMethod.GET)
-	public String deleteFilm(@RequestParam("id") int filmId) {
-		try {
-			boolean deletionResult = filmDAO.deleteFilm(filmId);
+	public String deleteFilm(@RequestParam("filmId") int filmId) {
+	    try {
+	        boolean deletionResult = filmDAO.deleteFilm(filmId);
 
-			if (deletionResult) {
-				return "redirect:/referringPage";
-			} else {
-				return "redirect:/referringPage?error=1";
-			}
-		} catch (SQLException e) {
-			return "redirect:/referringPage?error=1";
-		}
+	        if (deletionResult) {
+	            return "redirect:WEB-INF/views/home.jsp";
+	        } else {
+	            return "redirect:WEB-INF/views/home.jsp?error=1";
+	        }
+	    } catch (SQLException e) {
+	        return "redirect:WEB-INF/views/home.jsp?error=1";
+	    }
 	}
 
 }
