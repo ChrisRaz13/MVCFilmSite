@@ -1,5 +1,8 @@
 package com.skilldistillery.film.filmDAOImpl;
 
-public class filmDAOImpl implements filmDAO{
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class FilmDAOImpl implements FilmDAO{
 
 }

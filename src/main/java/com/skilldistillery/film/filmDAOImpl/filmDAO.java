@@ -1,5 +1,5 @@
 package com.skilldistillery.film.filmDAOImpl;
 
-public interface filmDAO {
+public interface FilmDAO {
 
 }
