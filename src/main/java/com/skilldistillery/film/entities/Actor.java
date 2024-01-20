@@ -1,13 +1,12 @@
 package com.skilldistillery.film.entities;
+
 import java.util.Objects;
 
 public class Actor {
-	  private int id;
-	  private String firstName;
-	  private String lastName;
-	 
-	  
-	  
+	private int id;
+	private String firstName;
+	private String lastName;
+
 	public Actor() {
 
 	}
@@ -64,7 +63,5 @@ public class Actor {
 	public String toString() {
 		return "Actor first name: " + firstName + "\nLast name: " + lastName + "\n";
 	}
-
-
 
 }
