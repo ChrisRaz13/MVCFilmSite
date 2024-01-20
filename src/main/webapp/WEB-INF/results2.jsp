@@ -6,6 +6,7 @@
 <title>Search Results 2</title>
 </head>
 <body>
+<<<<<<< HEAD
 	<h2>Search Results 2</h2>
 	<c:forEach var="film" items="${films}">
 		<p>${film.title}</p>
@@ -15,5 +16,11 @@
 			<li>${actor.firstName}${actor.lastName}</li>
 		</c:forEach>
 	</ul>
+
 </body>
 </html>
+
+
+
+
+

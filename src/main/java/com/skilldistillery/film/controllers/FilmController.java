@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -86,6 +87,20 @@ public class FilmController {
 	}
 
 	
-	
+	@RequestMapping(value = "updatefilm.do", method = RequestMethod.POST)
+	public String updateFilm(@ModelAttribute("film") Film film) {
+	    try {
+	        boolean updateResult = filmDAO.updateFilm(film);
+
+	        if (updateResult) {
+	            return "redirect:/success.html";
+	        } else {
+	            return "redirect:/error.html?error=1";
+	        }
+	    } catch (SQLException e) {
+	        return "redirect:/error.html?error=1";
+	    }
+	}
+
 	
 }
