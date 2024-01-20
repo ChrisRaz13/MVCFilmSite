@@ -57,17 +57,17 @@ public class FilmController {
 
 	@RequestMapping(value = "deletefilm.do", method = RequestMethod.GET)
 	public String deleteFilm(@RequestParam("filmId") int filmId) {
-	    try {
-	        boolean deletionResult = filmDAO.deleteFilm(filmId);
+		try {
+			boolean deletionResult = filmDAO.deleteFilm(filmId);
 
-	        if (deletionResult) {
-	            return "redirect:WEB-INF/views/home.jsp";
-	        } else {
-	            return "redirect:WEB-INF/views/home.jsp?error=1";
-	        }
-	    } catch (SQLException e) {
-	        return "redirect:WEB-INF/views/home.jsp?error=1";
-	    }
+			if (deletionResult) {
+				return "redirect:/success.html";
+			} else {
+				return "redirect:/error.html?error=1";
+			}
+		} catch (SQLException e) {
+			return "redirect:/error.?error=1";
+		}
 	}
 
 }
