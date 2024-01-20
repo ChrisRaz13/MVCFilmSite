@@ -9,7 +9,12 @@
     <h2>Search Results 2</h2>
     <c:forEach var="film" items="${films}">
         <p>${film.title}</p>
- 
+
     </c:forEach>
 </body>
 </html>
+
+
+
+
+
