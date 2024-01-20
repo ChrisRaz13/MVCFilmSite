@@ -4,7 +4,6 @@ import java.sql.SQLException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +21,14 @@ public class FilmController {
 	public String home() {
 		return "WEB-INF/views/home.jsp";
 	}
+//	@RequestMapping(path = "createfilm.do", method = RequestMethod.POST)
+//	public ModelAndView newState(Film film, RedirectAttributes redir) throws SQLException {
+//		filmDAO.createFilm(film);
+//		ModelAndView mv = new ModelAndView();
+//		redir.addFlashAttribute("film", film); 
+//		mv.setViewName("redirect:createnewfilm.do"); 
+//		return mv;
+//	}
 
 	@RequestMapping(value = "createfilm.do", method = RequestMethod.GET)
 	public ModelAndView createFilm(@RequestParam("id") int id, @RequestParam("title") String title,
@@ -46,6 +53,21 @@ public class FilmController {
 		mv.addObject("film", film);
 		mv.setViewName("WEB-INF/results.jsp");
 		return mv;
+	}
+
+	@RequestMapping(value = "deletefilm.do", method = RequestMethod.GET)
+	public String deleteFilm(@RequestParam("id") int filmId) {
+		try {
+			boolean deletionResult = filmDAO.deleteFilm(filmId);
+
+			if (deletionResult) {
+				return "redirect:/referringPage";
+			} else {
+				return "redirect:/referringPage?error=1";
+			}
+		} catch (SQLException e) {
+			return "redirect:/referringPage?error=1";
+		}
 	}
 
 }

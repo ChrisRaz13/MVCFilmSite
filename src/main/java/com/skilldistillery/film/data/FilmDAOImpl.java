@@ -51,6 +51,12 @@ public class FilmDAOImpl implements FilmDAO {
 	}
 
 	public Film createFilm(Film film) throws SQLException {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Connection conn = DriverManager.getConnection(URL, USER, PWD);
 		try {
 			String sql = "INSERT INTO film (id, title, description, language_id) " + "VALUES (?,?,?,?)";
@@ -122,6 +128,11 @@ public class FilmDAOImpl implements FilmDAO {
 	}
 
 	public boolean deleteFilm(int filmId) throws SQLException {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		Connection conn = null;
 		try {
 			conn = DriverManager.getConnection(URL, USER, PWD);
@@ -147,8 +158,8 @@ public class FilmDAOImpl implements FilmDAO {
 					return false;
 				}
 			}
-		} catch (SQLException sqle) {
-			sqle.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
 			if (conn != null) {
 				try {
 					conn.rollback();
