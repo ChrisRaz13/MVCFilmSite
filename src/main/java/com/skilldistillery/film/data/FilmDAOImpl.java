@@ -52,6 +52,12 @@ public class FilmDAOImpl implements FilmDAO {
 	}
 
 	public Film createFilm(Film film) throws SQLException {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Connection conn = DriverManager.getConnection(URL, USER, PWD);
 		try {
 			String sql = "INSERT INTO film (id, title, description, language_id) " + "VALUES (?,?,?,?)";

@@ -4,11 +4,11 @@ import java.sql.SQLException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.skilldistillery.film.data.FilmDAOImpl;
 import com.skilldistillery.film.entities.Film;
@@ -22,14 +22,30 @@ public class FilmController {
 	public String home() {
 		return "WEB-INF/views/home.jsp";
 	}
+//	@RequestMapping(path = "createfilm.do", method = RequestMethod.POST)
+//	public ModelAndView newState(Film film, RedirectAttributes redir) throws SQLException {
+//		filmDAO.createFilm(film);
+//		ModelAndView mv = new ModelAndView();
+//		redir.addFlashAttribute("film", film); 
+//		mv.setViewName("redirect:createnewfilm.do"); 
+//		return mv;
+//	}
 
-	@RequestMapping(value = "createfilm.do", method = RequestMethod.POST)
-	public ModelAndView createFilm(@RequestBody Film film) throws SQLException {
-		ModelAndView mv = new ModelAndView();
-		Film newFilm = filmDAO.createFilm(film);
-		mv.addObject("state", newFilm);
-		mv.setViewName("WEB-INF/results.jsp");
-		return mv;
+	@RequestMapping(value = "createfilm.do", method = RequestMethod.GET)
+	public ModelAndView createFilm(@RequestParam("id") int id, 
+	                               @RequestParam("title") String title,
+	                               @RequestParam("description") String description,
+	                               @RequestParam("language_id") int languageId) throws SQLException {
+	    Film film = new Film();
+	    film.setId(id);
+	    film.setTitle(title);
+	    film.setDescription(description);
+	    film.setLanguageId(languageId);
+	    ModelAndView mv = new ModelAndView();
+	    Film newFilm = filmDAO.createFilm(film);
+	    mv.addObject("film", newFilm);
+	    mv.setViewName("WEB-INF/results.jsp");
+	    return mv;
 	}
 
 	@RequestMapping(path = "filmbyID.do", params = "id", method = RequestMethod.GET)

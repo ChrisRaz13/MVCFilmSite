@@ -1,21 +1,27 @@
-
 <!DOCTYPE html>
 <html>
-
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Films</title>
+<title>CreateFilms</title>
 </head>
 
 <body>
 		<h3>Add Films</h3>
-	<form action="AddFilm.do" method="GET">
-		Name:
-		<input type="text" name="name" />
-		<input type="submit" value="Submit Film" />
-	</form>
-	
-	
+	 <form action="createfilm.do" method="GET">
+      <label for="id">ID:</label>
+      <input type="text" name="id" value=""/>
+      <br>
+      <label for="title">Title:</label>
+      <input type="text" name="title" value="">
+      <br>
+      <label for="description">Description:</label>
+      <input type="text" name="description" value=""/>
+      <br>
+      <label for="language_id">Language ID:</label>
+      <input type="text" name="language_id" value=""/>
+      <br>
+      <input type="submit" value="Add Film"/>
+    </form>
 </body>
 
 </html>
