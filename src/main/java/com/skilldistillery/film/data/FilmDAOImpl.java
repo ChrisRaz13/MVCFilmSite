@@ -22,7 +22,6 @@ public class FilmDAOImpl implements FilmDAO {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		Film film = null;
@@ -88,35 +87,6 @@ public class FilmDAOImpl implements FilmDAO {
 		return film;
 	}
 
-	public boolean deleteFilm(Film film) throws SQLException {
-		Connection conn = null;
-		try {
-			conn = DriverManager.getConnection(URL, USER, PWD);
-			conn.setAutoCommit(false); // START TRANSACTION
-			String sql = "DELETE FROM film WHERE film.id = ?";
-			PreparedStatement stmt = conn.prepareStatement(sql);
-			stmt.setInt(1, film.getId());
-			int updateCount = stmt.executeUpdate();
-			sql = "DELETE FROM actor WHERE id = ?";
-			stmt = conn.prepareStatement(sql);
-			stmt.setInt(1, film.getId());
-			updateCount = stmt.executeUpdate();
-			conn.commit(); // COMMIT TRANSACTION
-		} catch (SQLException sqle) {
-			sqle.printStackTrace();
-			if (conn != null) {
-				try {
-					conn.rollback();
-				} catch (SQLException sqle2) {
-					System.err.println("Error trying to rollback");
-				}
-			}
-			return false;
-		}
-		return true;
-
-	}
-
 	@Override
 	public boolean updateFilm(Film film) throws SQLException {
 		String updateSql = "UPDATE film SET title = ?, description = ?, release_year = ?, "
@@ -151,4 +121,64 @@ public class FilmDAOImpl implements FilmDAO {
 		}
 	}
 
+	public boolean deleteFilm(int filmId) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = DriverManager.getConnection(URL, USER, PWD);
+			conn.setAutoCommit(false);
+
+			if (hasChildRecords(filmId, conn)) {
+				System.out.println("Failed: Film has child records, cannot delete.");
+				return false;
+			}
+
+			String deleteFilmSql = "DELETE FROM film WHERE id = ?";
+			try (PreparedStatement deleteFilmStmt = conn.prepareStatement(deleteFilmSql)) {
+				deleteFilmStmt.setInt(1, filmId);
+				int filmDeletionCount = deleteFilmStmt.executeUpdate();
+
+				if (filmDeletionCount == 1) {
+					System.out.println("Success: Film deleted successfully.");
+					conn.commit();
+					return true;
+				} else {
+					System.out.println("Failed: Film deletion unsuccessful.");
+					conn.rollback();
+					return false;
+				}
+			}
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+			if (conn != null) {
+				try {
+					conn.rollback();
+				} catch (SQLException sqle2) {
+					System.err.println("Error trying to rollback");
+				}
+			}
+			return false;
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	private boolean hasChildRecords(int filmId, Connection conn) throws SQLException {
+		String checkChildRecordsSql = "SELECT COUNT(*) FROM other_table WHERE film_id = ?";
+		try (PreparedStatement checkStmt = conn.prepareStatement(checkChildRecordsSql)) {
+			checkStmt.setInt(1, filmId);
+			try (ResultSet resultSet = checkStmt.executeQuery()) {
+				if (resultSet.next()) {
+					int count = resultSet.getInt(1);
+					return count > 0;
+				}
+			}
+		}
+		return false;
+	}
 }
