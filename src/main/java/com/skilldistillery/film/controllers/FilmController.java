@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.skilldistillery.film.data.FilmDAOImpl;
@@ -87,15 +88,23 @@ public class FilmController {
 	}
 
 	
-	@RequestMapping(value = "updatefilm.do", method = RequestMethod.POST)
-	public ModelAndView updateFilm(@ModelAttribute("film") Film film) throws SQLException {
-		ModelAndView mv = new ModelAndView();
-		boolean updateResult = filmDAO.updateFilm(film);
-		mv.addObject("films", updateResult);
-		mv.setViewName("WEB-INF/results.jsp"); 
-		return mv;
-		
-	}
+	 @RequestMapping(value = "updatefilm.do", method = RequestMethod.GET)
+	    public ModelAndView showUpdateForm(@RequestParam("id") int id) throws SQLException {
+	        Film film = filmDAO.findFilmById(id);
+	        ModelAndView mv = new ModelAndView();
+	        mv.addObject("film", film);
+	        mv.setViewName("WEB-INF/views/results.jsp");
+	        return mv;
+	    }
+
+	    @RequestMapping(value = "updatefilm.do", method = RequestMethod.POST)
+	    @ResponseBody 
+	    public boolean updateFilm(@ModelAttribute("film") Film film) throws SQLException {
+
+	
+	        return filmDAO.updateFilm(film);
+	    }
+	    
 
 	
 }
