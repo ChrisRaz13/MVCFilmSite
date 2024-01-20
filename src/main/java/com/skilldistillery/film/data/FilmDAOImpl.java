@@ -18,6 +18,39 @@ public class FilmDAOImpl implements FilmDAO {
 	private static final String USER = "student";
 	private static final String PWD = "student";
 
+	public Film findFilmById(int filmId) throws SQLException {
+		Film film = null;
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String sql = "SELECT film.*, language.id, language.name FROM film JOIN language ON film.language_id = language.id WHERE film.id = ?";
+		Connection conn = DriverManager.getConnection(URL, USER, PWD);
+
+		PreparedStatement stmt = conn.prepareStatement(sql);
+		stmt.setInt(1, filmId);
+
+		ResultSet filmResult = stmt.executeQuery();
+		if (filmResult.next()) {
+			film = new Film();
+			film.setId(filmResult.getInt("id"));
+			film.setTitle(filmResult.getString("title"));
+			film.setReleaseYear(filmResult.getInt("release_year"));
+			film.setRating(filmResult.getString("rating"));
+			film.setDescription(filmResult.getString("description"));
+			film.setLanguage(filmResult.getString("language.name"));
+
+		}
+
+		filmResult.close();
+		stmt.close();
+		conn.close();
+
+		return film;
+	}
+	
 	public Film createFilm(Film film) throws SQLException {
 		Connection conn = DriverManager.getConnection(URL, USER, PWD);
 		try {
