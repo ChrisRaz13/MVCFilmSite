@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
@@ -191,5 +193,37 @@ public class FilmDAOImpl implements FilmDAO {
 			}
 		}
 		return false;
+	}
+	public List<Film> findFilmByKeyword(String filmKeyword) throws SQLException {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	    List<Film> films = new ArrayList<>();
+
+	    String sql = "SELECT film.*, language.id, language.name FROM film JOIN language ON film.language_id = language.id WHERE film.title LIKE ? OR film.description LIKE ?";
+	    Connection conn = DriverManager.getConnection(URL, USER, PWD);
+
+	    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+	        stmt.setString(1, "%" + filmKeyword + "%");
+	        stmt.setString(2, "%" + filmKeyword + "%");
+
+	        try (ResultSet filmResult = stmt.executeQuery()) {
+	            while (filmResult.next()) {
+	                Film film = new Film();
+	                film.setId(filmResult.getInt("id"));
+	                film.setTitle(filmResult.getString("title"));
+	                film.setReleaseYear(filmResult.getInt("release_year"));
+	                film.setRating(filmResult.getString("rating"));
+	                film.setDescription(filmResult.getString("description"));
+	                film.setLanguage(filmResult.getString("language.name"));
+
+	                films.add(film);
+	            }
+	        }
+	    }
+
+	    return films;
 	}
 }

@@ -14,6 +14,6 @@
 	<br />
 	<a href="deletefilm.html">Delete a film</a>
 	<br />
-
+	<a href="filmbypattern.html">Search for film using a keyword</a>
 </body>
 </html>

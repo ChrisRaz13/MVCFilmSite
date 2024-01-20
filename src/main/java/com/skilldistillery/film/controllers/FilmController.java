@@ -1,6 +1,7 @@
 package com.skilldistillery.film.controllers;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -74,4 +75,17 @@ public class FilmController {
 	    return "redirect:/WEB-INF/views/home.jsp";
 	}
 
+	
+	@RequestMapping(path = "filmbypattern.do", params = "filmKeyword", method = RequestMethod.GET)
+	public ModelAndView getFilmByKeyword(@RequestParam("filmKeyword") String filmKeyword) throws SQLException {
+	    ModelAndView mv = new ModelAndView();
+	    List<Film> films = filmDAO.findFilmByKeyword(filmKeyword);
+	    mv.addObject("films", films);
+	    mv.setViewName("WEB-INF/results2.jsp"); 
+	    return mv;
+	}
+
+	
+	
+	
 }
