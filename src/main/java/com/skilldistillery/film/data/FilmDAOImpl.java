@@ -97,6 +97,12 @@ public class FilmDAOImpl implements FilmDAO {
 
 	@Override
 	public boolean updateFilm(Film film) throws SQLException {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		String updateSql = "UPDATE film SET title = ?, description = ?, release_year = ?, "
 				+ "language_id = ?, rating = ? WHERE id = ?";
 

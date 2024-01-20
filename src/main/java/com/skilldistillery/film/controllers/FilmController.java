@@ -88,18 +88,13 @@ public class FilmController {
 
 	
 	@RequestMapping(value = "updatefilm.do", method = RequestMethod.POST)
-	public String updateFilm(@ModelAttribute("film") Film film) {
-	    try {
-	        boolean updateResult = filmDAO.updateFilm(film);
-
-	        if (updateResult) {
-	            return "redirect:/success.html";
-	        } else {
-	            return "redirect:/error.html?error=1";
-	        }
-	    } catch (SQLException e) {
-	        return "redirect:/error.html?error=1";
-	    }
+	public ModelAndView updateFilm(@ModelAttribute("film") Film film) throws SQLException {
+		ModelAndView mv = new ModelAndView();
+		boolean updateResult = filmDAO.updateFilm(film);
+		mv.addObject("films", updateResult);
+		mv.setViewName("WEB-INF/results.jsp"); 
+		return mv;
+		
 	}
 
 	
