@@ -1,18 +1,60 @@
-<!DOCTYPE html >
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Films</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Film Lookup by ID</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 20px;
+            text-align: center;
+        }
+
+        h3 {
+            color: #333;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            font-size: 16px;
+        }
+
+        input[type="submit"] {
+            padding: 8px 16px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            border: none;
+        }
+
+        a {
+            display: block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        a:hover {
+            color: #0056b3;
+        }
+    </style>
 </head>
 <body>	
-	<h3>Films</h3>
-	<form action="filmbyID.do" method="GET">
-		ID:
-		<input type="text" name="id" />
-		<input type="submit" value="Find film" />
-	</form>
-	
-	<a href="deletefilm.html">Delete a film</a><br/>
-	
+    <h3>Film Lookup</h3>
+    <form action="filmbyID.do" method="GET">
+        ID:
+        <input type="text" name="id" />
+        <input type="submit" value="Find Film" />
+    </form>
+    
+    <a href="deletefilm.html">Delete a Film</a>
 </body>
 </html>

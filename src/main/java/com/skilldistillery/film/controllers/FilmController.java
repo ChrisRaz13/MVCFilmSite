@@ -27,10 +27,11 @@ public class FilmController {
 	public String home() {
 		return "WEB-INF/views/home.jsp";
 	}
-    private static final String URL = "jdbc:mysql://localhost:3306/sdvid";
-    private static final String USER = "student";
+
+	private static final String URL = "jdbc:mysql://localhost:3306/sdvid";
+	private static final String USER = "student";
 	private static final String PWD = "student";
-	
+
 	@RequestMapping(value = "createfilm.do", method = RequestMethod.GET)
 	public ModelAndView createFilm(@RequestParam("id") int id, @RequestParam("title") String title,
 			@RequestParam("description") String description, @RequestParam("language_id") int languageId)
@@ -58,61 +59,62 @@ public class FilmController {
 
 	@RequestMapping(value = "deletefilm.do", method = RequestMethod.GET)
 	public ModelAndView deleteFilm(@RequestParam("filmId") int filmId) {
+		ModelAndView modelAndView = new ModelAndView();
+
+		try (Connection conn = DriverManager.getConnection(URL, USER, PWD)) {
+			boolean deletionResult = filmDAO.deleteFilm(filmId);
+
+			if (deletionResult) {
+				modelAndView.setViewName("redirect:/success.html");
+				modelAndView.addObject("successMessage", "Film deleted successfully.");
+			} else {
+				boolean hasChildRecords = filmDAO.hasChildRecords(filmId);
+
+				if (hasChildRecords) {
+					modelAndView.addObject("errorMessage", "Failed: Film has child records, cannot delete.");
+				} else {
+					modelAndView.addObject("errorMessage", "Failed: Film with the given ID does not exist.");
+				}
+
+				modelAndView.setViewName("redirect:/error.html");
+			}
+		} catch (SQLException e) {
+			modelAndView.addObject("errorMessage", "An error occurred while deleting the film.");
+			modelAndView.setViewName("redirect:/error.html");
+		}
+
+		return modelAndView;
+	}
+
+	@RequestMapping(path = "filmbypattern.do", params = "filmKeyword", method = RequestMethod.GET)
+	public ModelAndView getFilmByKeyword(@RequestParam("filmKeyword") String filmKeyword) throws SQLException {
+		ModelAndView mv = new ModelAndView();
+		List<Film> films = filmDAO.findFilmByKeyword(filmKeyword);
+		mv.addObject("films", films);
+		mv.setViewName("WEB-INF/results2.jsp");
+		return mv;
+	}
+
+	@RequestMapping(value = "updatefilm.do", method = RequestMethod.POST)
+	public ModelAndView updateFilm(@ModelAttribute("film") Film updatedFilm, Model model) {
 	    ModelAndView modelAndView = new ModelAndView();
 
-	    try (Connection conn = DriverManager.getConnection(URL, USER, PWD)) {
-	        boolean deletionResult = filmDAO.deleteFilm(filmId);
+	    try {
+	        boolean updateResult = filmDAO.updateFilm(updatedFilm);
 
-	        if (deletionResult) {
+	        if (updateResult) {
+	            modelAndView.addObject("successMessage", "Film updated successfully.");
 	            modelAndView.setViewName("redirect:/success.html");
-	            modelAndView.addObject("successMessage", "Film deleted successfully.");
 	        } else {
-	            boolean hasChildRecords = filmDAO.hasChildRecords(filmId);
-
-	            if (hasChildRecords) {
-	                modelAndView.addObject("errorMessage", "Failed: Film has child records, cannot delete.");
-	            } else {
-	                modelAndView.addObject("errorMessage", "Failed: Film with the given ID does not exist.");
-	            }
-
+	            modelAndView.addObject("errorMessage", "Failed to update film.");
 	            modelAndView.setViewName("redirect:/error.html");
 	        }
 	    } catch (SQLException e) {
-	        modelAndView.addObject("errorMessage", "An error occurred while deleting the film.");
+	        modelAndView.addObject("errorMessage", "An error occurred while updating the film.");
 	        modelAndView.setViewName("redirect:/error.html");
 	    }
 
 	    return modelAndView;
 	}
 
-	
-	@RequestMapping(path = "filmbypattern.do", params = "filmKeyword", method = RequestMethod.GET)
-	public ModelAndView getFilmByKeyword(@RequestParam("filmKeyword") String filmKeyword) throws SQLException {
-	    ModelAndView mv = new ModelAndView();
-	    List<Film> films = filmDAO.findFilmByKeyword(filmKeyword);
-	    mv.addObject("films", films);
-	    mv.setViewName("WEB-INF/results2.jsp"); 
-	    return mv;
-	}
-
-	
-	 @RequestMapping(value = "updatefilm.do", method = RequestMethod.GET)
-	    public ModelAndView showUpdateForm(@RequestParam("id") int id) throws SQLException {
-	        Film film = filmDAO.findFilmById(id);
-	        ModelAndView mv = new ModelAndView();
-	        mv.addObject("film", film);
-	        mv.setViewName("WEB-INF/views/results.jsp");
-	        return mv;
-	    }
-
-	    @RequestMapping(value = "updatefilm.do", method = RequestMethod.POST)
-	    @ResponseBody 
-	    public boolean updateFilm(@ModelAttribute("film") Film film) throws SQLException {
-
-	
-	        return filmDAO.updateFilm(film);
-	    }
-	    
-
-	
 }

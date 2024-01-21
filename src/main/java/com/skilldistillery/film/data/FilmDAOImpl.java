@@ -95,45 +95,45 @@ public class FilmDAOImpl implements FilmDAO {
 		return film;
 	}
 
-	@Override
-	public boolean updateFilm(Film film) throws SQLException {
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		String updateSql = "UPDATE film SET title = ?, description = ?, release_year = ?, "
-				+ "language_id = ?, rating = ? WHERE id = ?";
-
-		try (Connection conn = DriverManager.getConnection(URL, USER, PWD);
-				PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
-
-			conn.setAutoCommit(false);
-
-			try {
-				updateStmt.setString(1, film.getTitle());
-				updateStmt.setString(2, film.getDescription());
-				updateStmt.setInt(3, film.getReleaseYear());
-				updateStmt.setInt(4, film.getLanguageId());
-				updateStmt.setString(5, film.getRating());
-				updateStmt.setInt(6, film.getId());
-
-				int rowsAffected = updateStmt.executeUpdate();
-
-				if (rowsAffected > 0) {
-					conn.commit();
-					return true;
-				} else {
-					conn.rollback();
-					return false;
-				}
-			} catch (SQLException e) {
-				conn.rollback();
-				throw e;
-			}
-		}
-	}
+//	@Override
+//	public boolean updateFilm(Film film) throws SQLException {
+//		try {
+//			Class.forName("com.mysql.jdbc.Driver");
+//		} catch (ClassNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		String updateSql = "UPDATE film SET title = ?, description = ?, release_year = ?, "
+//				+ "language_id = ?, rating = ? WHERE id = ?";
+//
+//		try (Connection conn = DriverManager.getConnection(URL, USER, PWD);
+//				PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
+//
+//			conn.setAutoCommit(false);
+//
+//			try {
+//				updateStmt.setString(1, film.getTitle());
+//				updateStmt.setString(2, film.getDescription());
+//				updateStmt.setInt(3, film.getReleaseYear());
+//				updateStmt.setInt(4, film.getLanguageId());
+//				updateStmt.setString(5, film.getRating());
+//				updateStmt.setInt(6, film.getId());
+//
+//				int rowsAffected = updateStmt.executeUpdate();
+//
+//				if (rowsAffected > 0) {
+//					conn.commit();
+//					return true;
+//				} else {
+//					conn.rollback();
+//					return false;
+//				}
+//			} catch (SQLException e) {
+//				conn.rollback();
+//				throw e;
+//			}
+//		}
+//	}
 
 	public boolean deleteFilm(int filmId) throws SQLException {
 		try {
@@ -253,4 +253,27 @@ public class FilmDAOImpl implements FilmDAO {
 
 		return films;
 	}
+	@Override
+	public boolean updateFilm(Film film) throws SQLException {
+	    try {
+	        Class.forName("com.mysql.cj.jdbc.Driver");
+	    } catch (ClassNotFoundException e) {
+	        e.printStackTrace();
+	    }
+
+	    try (Connection conn = DriverManager.getConnection(URL, USER, PWD)) {
+	        String updateSql = "UPDATE film SET title = ?, description = ? WHERE id = ?";
+
+	        try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
+	            updateStmt.setString(1, film.getTitle());
+	            updateStmt.setString(2, film.getDescription());
+	            updateStmt.setInt(3, film.getId());
+
+	            int rowsAffected = updateStmt.executeUpdate();
+
+	            return rowsAffected > 0;
+	        }
+	    }
+	}
+
 }

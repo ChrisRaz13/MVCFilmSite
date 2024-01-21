@@ -1,18 +1,77 @@
-<!DOCTYPE html >
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Films</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Films by keyword</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 20px;
+            text-align: center;
+        }
+
+        h3 {
+            color: #007bff;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        a {
+            display: block;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+    </style>
 </head>
-<body>	
-	<h3>Films</h3>
-	<form action="filmbypattern.do" method="GET">
-		Keyword:
-		<input type="text" name="filmKeyword" />
-		<input type="submit" value="Find film" />
-	</form>
-	
-	<a href="deletefilm.html">Delete a film</a><br/>
-	
+
+<body>
+    <h3>Search Films</h3>
+    <form action="filmbypattern.do" method="GET">
+        <label for="filmKeyword">Keyword:</label>
+        <input type="text" name="filmKeyword" />
+        <br>
+        <input type="submit" value="Find Film" />
+    </form>
+
+    <a href="deletefilm.html">Delete a Film</a>
 </body>
+
 </html>
