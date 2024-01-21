@@ -140,11 +140,16 @@ public class FilmDAOImpl implements FilmDAO {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
+			System.err.println("Failed to load JDBC driver");
+			return false;
 		}
+
 		Connection conn = null;
 		try {
 			conn = DriverManager.getConnection(URL, USER, PWD);
 			conn.setAutoCommit(false);
+
+			System.out.println("Attempting to delete film with ID: " + filmId);
 
 			if (hasChildRecords(filmId, conn)) {
 				System.out.println("Failed: Film has child records, cannot delete.");
@@ -154,6 +159,7 @@ public class FilmDAOImpl implements FilmDAO {
 			String deleteFilmSql = "DELETE FROM film WHERE id = ?";
 			try (PreparedStatement deleteFilmStmt = conn.prepareStatement(deleteFilmSql)) {
 				deleteFilmStmt.setInt(1, filmId);
+				System.out.println("Executing SQL: " + deleteFilmStmt.toString());
 				int filmDeletionCount = deleteFilmStmt.executeUpdate();
 
 				if (filmDeletionCount == 1) {
@@ -161,17 +167,19 @@ public class FilmDAOImpl implements FilmDAO {
 					conn.commit();
 					return true;
 				} else {
-					System.out.println("Failed: Film deletion unsuccessful.");
+					System.out.println("Failed: Film deletion unsuccessful. No rows affected.");
 					conn.rollback();
 					return false;
 				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			System.err.println("Error executing SQL statement");
 			if (conn != null) {
 				try {
 					conn.rollback();
-				} catch (SQLException sqle2) {
+				} catch (SQLException sqle) {
+					sqle.printStackTrace();
 					System.err.println("Error trying to rollback");
 				}
 			}
@@ -194,42 +202,48 @@ public class FilmDAOImpl implements FilmDAO {
 			try (ResultSet resultSet = checkStmt.executeQuery()) {
 				if (resultSet.next()) {
 					int count = resultSet.getInt(1);
+					System.out.println("Child records count: " + count);
 					return count > 0;
 				}
 			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.err.println("Error checking for child records");
+			return false;
 		}
 		return false;
 	}
+
 	public List<Film> findFilmByKeyword(String filmKeyword) throws SQLException {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-	    List<Film> films = new ArrayList<>();
+		List<Film> films = new ArrayList<>();
 
-	    String sql = "SELECT film.*, language.id, language.name FROM film JOIN language ON film.language_id = language.id WHERE film.title LIKE ? OR film.description LIKE ?";
-	    Connection conn = DriverManager.getConnection(URL, USER, PWD);
+		String sql = "SELECT film.*, language.id, language.name FROM film JOIN language ON film.language_id = language.id WHERE film.title LIKE ? OR film.description LIKE ?";
+		Connection conn = DriverManager.getConnection(URL, USER, PWD);
 
-	    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-	        stmt.setString(1, "%" + filmKeyword + "%");
-	        stmt.setString(2, "%" + filmKeyword + "%");
+		try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+			stmt.setString(1, "%" + filmKeyword + "%");
+			stmt.setString(2, "%" + filmKeyword + "%");
 
-	        try (ResultSet filmResult = stmt.executeQuery()) {
-	            while (filmResult.next()) {
-	                Film film = new Film();
-	                film.setId(filmResult.getInt("id"));
-	                film.setTitle(filmResult.getString("title"));
-	                film.setReleaseYear(filmResult.getInt("release_year"));
-	                film.setRating(filmResult.getString("rating"));
-	                film.setDescription(filmResult.getString("description"));
-	                film.setLanguage(filmResult.getString("language.name"));
+			try (ResultSet filmResult = stmt.executeQuery()) {
+				while (filmResult.next()) {
+					Film film = new Film();
+					film.setId(filmResult.getInt("id"));
+					film.setTitle(filmResult.getString("title"));
+					film.setReleaseYear(filmResult.getInt("release_year"));
+					film.setRating(filmResult.getString("rating"));
+					film.setDescription(filmResult.getString("description"));
+					film.setLanguage(filmResult.getString("language.name"));
 
-	                films.add(film);
-	            }
-	        }
-	    }
+					films.add(film);
+				}
+			}
+		}
 
-	    return films;
+		return films;
 	}
 }
