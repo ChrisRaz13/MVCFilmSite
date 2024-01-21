@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.skilldistillery.film.entities.Actor;
 import com.skilldistillery.film.entities.Film;
 
 @Repository
@@ -252,6 +253,72 @@ public class FilmDAOImpl implements FilmDAO {
 		}
 
 		return films;
+	}
+	
+	public List<Actor> findListOfActorsByFilmId(int filmId) throws SQLException {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		List<Actor> actors = new ArrayList<>();
+
+		String sql = "SELECT actor.*, film.*\n" + "FROM actor\n" + "JOIN film_actor fa ON actor.id = fa.actor_id\n"
+				+ "JOIN film ON film.id = fa.film_id WHERE film.id = ?";
+		Connection conn = DriverManager.getConnection(URL, USER, PWD);
+
+		PreparedStatement stmt = conn.prepareStatement(sql);
+		stmt.setInt(1, filmId);
+
+		ResultSet actorResult = stmt.executeQuery();
+
+		while (actorResult.next()) {
+			Actor actor = new Actor();
+			actor = new Actor();
+			actor.setId(actorResult.getInt("id"));
+			actor.setFirstName(actorResult.getString("first_name"));
+			actor.setLastName(actorResult.getString("last_name"));
+
+			actors.add(actor);
+
+		}
+		actorResult.close();
+		stmt.close();
+		conn.close();
+
+		return actors;
+	}
+	public List<Actor> findListOfActorsByFilmKeyword(String filmKeyword) throws SQLException {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		List<Actor> actors = new ArrayList<>();
+
+		String sql = "SELECT actor.id, actor.first_name, actor.last_name " + "FROM actor "
+				+ "JOIN film_actor fa ON actor.id = fa.actor_id " + "JOIN film ON film.id = fa.film_id "
+				+ "WHERE film.title LIKE ? OR film.description LIKE ?";
+
+		try (Connection conn = DriverManager.getConnection(URL, USER, PWD);
+				PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+			stmt.setString(1, "%" + filmKeyword + "%");
+			stmt.setString(2, "%" + filmKeyword + "%");
+			ResultSet actorResult = stmt.executeQuery();
+
+			while (actorResult.next()) {
+				Actor actor = new Actor();
+				actor.setId(actorResult.getInt("id"));
+				actor.setFirstName(actorResult.getString("first_name"));
+				actor.setLastName(actorResult.getString("last_name"));
+
+				actors.add(actor);
+			}
+		}
+		// ...
+
+		return actors;
 	}
 	@Override
 	public boolean updateFilm(Film film) throws SQLException {

@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.skilldistillery.film.data.FilmDAOImpl;
+import com.skilldistillery.film.entities.Actor;
 import com.skilldistillery.film.entities.Film;
 
 @Controller
@@ -52,7 +52,11 @@ public class FilmController {
 	public ModelAndView getFilmById(@RequestParam("id") int id) throws SQLException {
 		ModelAndView mv = new ModelAndView();
 		Film film = filmDAO.findFilmById(id);
+		List<Actor> actors = filmDAO.findListOfActorsByFilmId(id);
+		
 		mv.addObject("film", film);
+	    mv.addObject("actors", actors);
+	    
 		mv.setViewName("WEB-INF/results.jsp");
 		return mv;
 	}
@@ -90,7 +94,12 @@ public class FilmController {
 	public ModelAndView getFilmByKeyword(@RequestParam("filmKeyword") String filmKeyword) throws SQLException {
 		ModelAndView mv = new ModelAndView();
 		List<Film> films = filmDAO.findFilmByKeyword(filmKeyword);
+		List<Actor> actors = filmDAO.findListOfActorsByFilmKeyword(filmKeyword);
+		
+		
 		mv.addObject("films", films);
+		mv.addObject("actors", actors);
+		
 		mv.setViewName("WEB-INF/results2.jsp");
 		return mv;
 	}
@@ -103,8 +112,8 @@ public class FilmController {
 	        boolean updateResult = filmDAO.updateFilm(updatedFilm);
 
 	        if (updateResult) {
-	            modelAndView.addObject("successMessage", "Film updated successfully.");
 	            modelAndView.setViewName("redirect:/success.html");
+	            modelAndView.addObject("successMessage", "Film updated successfully.");
 	        } else {
 	            modelAndView.addObject("errorMessage", "Failed to update film.");
 	            modelAndView.setViewName("redirect:/error.html");

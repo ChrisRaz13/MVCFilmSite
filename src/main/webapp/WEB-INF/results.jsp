@@ -40,8 +40,8 @@ p {
 				<li><strong>Language:</strong> ${film.language}</li>
 				<li><strong>Actors:</strong>
 					<ul>
-						<c:forEach var="actor" items="${film.actors}">
-							<li>${actor.firstName}${actor.lastName}</li>
+						<c:forEach var="actor" items="${actors}">
+							<li>${actor.firstName} ${actor.lastName}</li>
 						</c:forEach>
 					</ul></li>
 			</ul>
