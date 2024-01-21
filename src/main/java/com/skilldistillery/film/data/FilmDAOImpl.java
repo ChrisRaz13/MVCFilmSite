@@ -151,7 +151,7 @@ public class FilmDAOImpl implements FilmDAO {
 
 			System.out.println("Attempting to delete film with ID: " + filmId);
 
-			if (hasChildRecords(filmId, conn)) {
+			if (hasChildRecords(filmId)) {
 				System.out.println("Failed: Film has child records, cannot delete.");
 				return false;
 			}
@@ -195,24 +195,31 @@ public class FilmDAOImpl implements FilmDAO {
 		}
 	}
 
-	private boolean hasChildRecords(int filmId, Connection conn) throws SQLException {
-		String checkChildRecordsSql = "SELECT COUNT(*) FROM other_table WHERE film_id = ?";
-		try (PreparedStatement checkStmt = conn.prepareStatement(checkChildRecordsSql)) {
-			checkStmt.setInt(1, filmId);
-			try (ResultSet resultSet = checkStmt.executeQuery()) {
-				if (resultSet.next()) {
-					int count = resultSet.getInt(1);
-					System.out.println("Child records count: " + count);
-					return count > 0;
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			System.err.println("Error checking for child records");
-			return false;
-		}
+	public boolean hasChildRecords(int filmId) throws SQLException {
+	    try (Connection conn = getConnection()) {
+	        String checkChildRecordsSql = "SELECT COUNT(*) FROM other_table WHERE film_id = ?";
+	        try (PreparedStatement checkStmt = conn.prepareStatement(checkChildRecordsSql)) {
+	            checkStmt.setInt(1, filmId);
+	            try (ResultSet resultSet = checkStmt.executeQuery()) {
+	                if (resultSet.next()) {
+	                    int count = resultSet.getInt(1);
+	                    System.out.println("Child records count: " + count);
+	                    return count > 0;
+	                }
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        System.err.println("Error checking for child records");
+	        return false;
+	    }
 		return false;
 	}
+
+	private Connection getConnection() throws SQLException {
+	    return DriverManager.getConnection(URL, USER, PWD);
+	}
+
 
 	public List<Film> findFilmByKeyword(String filmKeyword) throws SQLException {
 		try {

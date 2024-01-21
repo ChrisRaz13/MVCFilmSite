@@ -3,9 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <title>Deletion Failed</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #495057;
+            text-align: center;
+            margin: 50px;
+        }
+
+        h1 {
+            color: #dc3545;
+        }
+
+        p {
+            margin-bottom: 20px;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
     <h1>Deletion Failed</h1>
-    <a href="<%= request.getContextPath() %>/redirectToHome">Go Back Home</a>
+    <p>
+        The film deletion failed. This may be due to one of the following reasons:
+    </p>
+    
+        <li>The film with the given ID does not exist in the database.</li>
+        <li>The film has child records and cannot be deleted.</li>
+    
+    <p>
+        Please check the provided film ID and try again or <a href="<%= request.getContextPath() %>/redirectToHome">go back home</a>.
+    </p>
 </body>
 </html>

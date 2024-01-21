@@ -1,10 +1,13 @@
 package com.skilldistillery.film.controllers;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,15 +27,10 @@ public class FilmController {
 	public String home() {
 		return "WEB-INF/views/home.jsp";
 	}
-//	@RequestMapping(path = "createfilm.do", method = RequestMethod.POST)
-//	public ModelAndView newState(Film film, RedirectAttributes redir) throws SQLException {
-//		filmDAO.createFilm(film);
-//		ModelAndView mv = new ModelAndView();
-//		redir.addFlashAttribute("film", film); 
-//		mv.setViewName("redirect:createnewfilm.do"); 
-//		return mv;
-//	}
-
+    private static final String URL = "jdbc:mysql://localhost:3306/sdvid";
+    private static final String USER = "student";
+	private static final String PWD = "student";
+	
 	@RequestMapping(value = "createfilm.do", method = RequestMethod.GET)
 	public ModelAndView createFilm(@RequestParam("id") int id, @RequestParam("title") String title,
 			@RequestParam("description") String description, @RequestParam("language_id") int languageId)
@@ -59,22 +57,32 @@ public class FilmController {
 	}
 
 	@RequestMapping(value = "deletefilm.do", method = RequestMethod.GET)
-	public String deleteFilm(@RequestParam("filmId") int filmId) {
-		try {
-			boolean deletionResult = filmDAO.deleteFilm(filmId);
+	public ModelAndView deleteFilm(@RequestParam("filmId") int filmId) {
+	    ModelAndView modelAndView = new ModelAndView();
 
-			if (deletionResult) {
-				return "redirect:/success.html";
-			} else {
-				return "redirect:/error.html?error=1";
-			}
-		} catch (SQLException e) {
-			return "redirect:/error.html?error=1";
-		}
-	}
-	@RequestMapping("/redirectToHome")
-	public String redirectToHome() {
-	    return "redirect:/WEB-INF/views/home.jsp";
+	    try (Connection conn = DriverManager.getConnection(URL, USER, PWD)) {
+	        boolean deletionResult = filmDAO.deleteFilm(filmId);
+
+	        if (deletionResult) {
+	            modelAndView.setViewName("redirect:/success.html");
+	            modelAndView.addObject("successMessage", "Film deleted successfully.");
+	        } else {
+	            boolean hasChildRecords = filmDAO.hasChildRecords(filmId);
+
+	            if (hasChildRecords) {
+	                modelAndView.addObject("errorMessage", "Failed: Film has child records, cannot delete.");
+	            } else {
+	                modelAndView.addObject("errorMessage", "Failed: Film with the given ID does not exist.");
+	            }
+
+	            modelAndView.setViewName("redirect:/error.html");
+	        }
+	    } catch (SQLException e) {
+	        modelAndView.addObject("errorMessage", "An error occurred while deleting the film.");
+	        modelAndView.setViewName("redirect:/error.html");
+	    }
+
+	    return modelAndView;
 	}
 
 	
